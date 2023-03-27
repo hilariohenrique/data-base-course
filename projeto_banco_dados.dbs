@@ -37,11 +37,11 @@
 			</fk>
 		</table>
 		<table name="cliente_cupom" prior="tbl" >
+			<column name="id" type="serial" jt="4" mandatory="y" />
 			<column name="fk_id_cliente" type="integer" jt="4" mandatory="y" />
 			<column name="fk_id_cupom" type="integer" jt="4" mandatory="y" />
 			<index name="pk_cliente_cupom" unique="PRIMARY_KEY" >
-				<column name="fk_id_cliente" />
-				<column name="fk_id_cupom" />
+				<column name="id" />
 			</index>
 			<fk name="fk_id_cliente" to_schema="ecommerce-turma-926" to_table="cliente" >
 				<fk_column name="fk_id_cliente" pk="id" />
@@ -134,11 +134,15 @@
 			<column name="status" type="varchar" length="100" jt="12" mandatory="y" />
 			<column name="id_cliente" type="integer" jt="4" mandatory="y" />
 			<column name="data_criacao" type="timestamp" jt="93" mandatory="y" />
+			<column name="fk_id_client_cupom" type="integer" jt="4" />
 			<index name="pk_pedido" unique="PRIMARY_KEY" >
 				<column name="id" />
 			</index>
 			<fk name="fk_pedido_cliente" to_schema="ecommerce-turma-926" to_table="cliente" >
 				<fk_column name="id_cliente" pk="id" />
+			</fk>
+			<fk name="fk_id_cliente_cupom" to_schema="ecommerce-turma-926" to_table="cliente_cupom" >
+				<fk_column name="fk_id_client_cupom" pk="id" />
 			</fk>
 		</table>
 		<table name="produto" prior="tbl" >
@@ -174,18 +178,18 @@
 		</table>
 	</schema>
 	<layout name="Default Layout" id="Layout-1b3d" show_column_type="y" show_relation="columns" >
-		<entity schema="ecommerce-turma-926" name="carrinho" color="C1D8EE" x="480" y="384" />
-		<entity schema="ecommerce-turma-926" name="cliente" color="C1D8EE" x="368" y="160" />
-		<entity schema="ecommerce-turma-926" name="cliente_cupom" color="C1D8EE" x="48" y="400" />
+		<entity schema="ecommerce-turma-926" name="carrinho" color="C1D8EE" x="464" y="384" />
+		<entity schema="ecommerce-turma-926" name="cliente" color="C1D8EE" x="352" y="160" />
+		<entity schema="ecommerce-turma-926" name="cliente_cupom" color="3986C1" x="64" y="416" />
 		<entity schema="ecommerce-turma-926" name="cupom" color="C1D8EE" x="48" y="160" />
-		<entity schema="ecommerce-turma-926" name="endereco" color="C1D8EE" x="752" y="48" />
-		<entity schema="ecommerce-turma-926" name="estoque" color="C1D8EE" x="1088" y="240" />
-		<entity schema="ecommerce-turma-926" name="fornecedor" color="C1D8EE" x="736" y="336" />
-		<entity schema="ecommerce-turma-926" name="item_pedido" color="C1D8EE" x="544" y="816" />
-		<entity schema="ecommerce-turma-926" name="pedido" color="C1D8EE" x="320" y="576" />
-		<entity schema="ecommerce-turma-926" name="produto" color="C1D8EE" x="736" y="608" />
-		<entity schema="ecommerce-turma-926" name="produto_estoque" color="C1D8EE" x="1088" y="448" />
-		<callout x="208" y="1424" pointer="Round" >
+		<entity schema="ecommerce-turma-926" name="endereco" color="C1D8EE" x="736" y="48" />
+		<entity schema="ecommerce-turma-926" name="estoque" color="C1D8EE" x="1072" y="240" />
+		<entity schema="ecommerce-turma-926" name="fornecedor" color="C1D8EE" x="720" y="336" />
+		<entity schema="ecommerce-turma-926" name="item_pedido" color="C1D8EE" x="528" y="816" />
+		<entity schema="ecommerce-turma-926" name="pedido" color="C1D8EE" x="304" y="576" />
+		<entity schema="ecommerce-turma-926" name="produto" color="C1D8EE" x="720" y="608" />
+		<entity schema="ecommerce-turma-926" name="produto_estoque" color="C1D8EE" x="1072" y="448" />
+		<callout x="192" y="1424" pointer="Round" >
 			<comment><![CDATA[This is a layout - a diagram with tools.
 - Right-click the layout to create new tables. 
 - Double-click table headers to edit. 
