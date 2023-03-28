@@ -6,7 +6,7 @@
 			<column name="fk_id_cliente" type="integer" jt="4" mandatory="y" />
 			<column name="fk_id_produto" type="integer" jt="4" mandatory="y" />
 			<column name="quantidade" type="numeric" jt="2" mandatory="y" />
-			<column name="data_insercao" type="date" jt="91" mandatory="y" />
+			<column name="data_insercao" type="timestamp" jt="93" mandatory="y" />
 			<index name="pk_carrinho" unique="PRIMARY_KEY" >
 				<column name="id" />
 			</index>
@@ -22,19 +22,12 @@
 			<column name="nome" type="varchar" length="895" jt="12" mandatory="y" />
 			<column name="cpf" type="char" length="11" jt="1" mandatory="y" />
 			<column name="email" type="varchar" length="500" jt="12" mandatory="y" />
-			<column name="fk_id_endereco" prior="id_endereco" type="integer" length="1000" jt="4" mandatory="y" />
 			<index name="unq_cliente_cpf" unique="UNIQUE_KEY" >
 				<column name="cpf" />
 			</index>
 			<index name="pk_cliente" unique="PRIMARY_KEY" >
 				<column name="id" />
 			</index>
-			<index name="unq_cliente_endereco" unique="UNIQUE_KEY" >
-				<column name="fk_id_endereco" />
-			</index>
-			<fk name="fk_cliente_endereco" to_schema="ecommerce-turma-926" to_table="endereco" >
-				<fk_column name="fk_id_endereco" pk="id" />
-			</fk>
 		</table>
 		<table name="cliente_cupom" prior="tbl" >
 			<column name="id" type="serial" jt="4" mandatory="y" />
@@ -48,6 +41,20 @@
 			</fk>
 			<fk name="fk_id_cupom" to_schema="ecommerce-turma-926" to_table="cupom" >
 				<fk_column name="fk_id_cupom" pk="id" />
+			</fk>
+		</table>
+		<table name="cliente_endereco" prior="tbl" >
+			<column name="id" type="serial" jt="4" mandatory="y" />
+			<column name="fk_id_cliente" type="integer" jt="4" mandatory="y" />
+			<column name="fk_id_endereco" type="integer" jt="4" mandatory="y" />
+			<index name="pk_cliente_endereco" unique="PRIMARY_KEY" >
+				<column name="id" />
+			</index>
+			<fk name="fk_cliente_endereco_cliente" to_schema="ecommerce-turma-926" to_table="cliente" >
+				<fk_column name="fk_id_cliente" pk="id" />
+			</fk>
+			<fk name="fk_cliente_endereco_endereco" to_schema="ecommerce-turma-926" to_table="endereco" >
+				<fk_column name="fk_id_endereco" pk="id" />
 			</fk>
 		</table>
 		<table name="cupom" prior="tbl" >
@@ -92,6 +99,9 @@
 			<index name="pk_estoque" unique="PRIMARY_KEY" >
 				<column name="id" />
 			</index>
+			<index name="unq_estoque" unique="UNIQUE_KEY" >
+				<column name="fk_id_endereco" />
+			</index>
 			<fk name="fk_id_endereco" to_schema="ecommerce-turma-926" to_table="endereco" >
 				<fk_column name="fk_id_endereco" pk="id" />
 			</fk>
@@ -132,17 +142,17 @@
 			<column name="prev_entrega" type="date" jt="91" mandatory="y" />
 			<column name="meio_pagamento" type="varchar" length="200" jt="12" mandatory="y" />
 			<column name="status" type="varchar" length="100" jt="12" mandatory="y" />
-			<column name="id_cliente" type="integer" jt="4" mandatory="y" />
+			<column name="id_cliente_endereco" prior="id_cliente" type="integer" jt="4" mandatory="y" />
 			<column name="data_criacao" type="timestamp" jt="93" mandatory="y" />
 			<column name="fk_id_client_cupom" type="integer" jt="4" />
 			<index name="pk_pedido" unique="PRIMARY_KEY" >
 				<column name="id" />
 			</index>
-			<fk name="fk_pedido_cliente" to_schema="ecommerce-turma-926" to_table="cliente" >
-				<fk_column name="id_cliente" pk="id" />
-			</fk>
 			<fk name="fk_id_cliente_cupom" to_schema="ecommerce-turma-926" to_table="cliente_cupom" >
 				<fk_column name="fk_id_client_cupom" pk="id" />
+			</fk>
+			<fk name="fk_cliente_endereco" to_schema="ecommerce-turma-926" to_table="cliente_endereco" >
+				<fk_column name="id_cliente_endereco" pk="id" />
 			</fk>
 		</table>
 		<table name="produto" prior="tbl" >
@@ -178,18 +188,19 @@
 		</table>
 	</schema>
 	<layout name="Default Layout" id="Layout-1b3d" show_column_type="y" show_relation="columns" >
-		<entity schema="ecommerce-turma-926" name="carrinho" color="C1D8EE" x="464" y="384" />
-		<entity schema="ecommerce-turma-926" name="cliente" color="C1D8EE" x="352" y="160" />
-		<entity schema="ecommerce-turma-926" name="cliente_cupom" color="3986C1" x="64" y="416" />
-		<entity schema="ecommerce-turma-926" name="cupom" color="C1D8EE" x="48" y="160" />
-		<entity schema="ecommerce-turma-926" name="endereco" color="C1D8EE" x="736" y="48" />
-		<entity schema="ecommerce-turma-926" name="estoque" color="C1D8EE" x="1072" y="240" />
-		<entity schema="ecommerce-turma-926" name="fornecedor" color="C1D8EE" x="720" y="336" />
-		<entity schema="ecommerce-turma-926" name="item_pedido" color="C1D8EE" x="528" y="816" />
-		<entity schema="ecommerce-turma-926" name="pedido" color="C1D8EE" x="304" y="576" />
-		<entity schema="ecommerce-turma-926" name="produto" color="C1D8EE" x="720" y="608" />
-		<entity schema="ecommerce-turma-926" name="produto_estoque" color="C1D8EE" x="1072" y="448" />
-		<callout x="192" y="1424" pointer="Round" >
+		<entity schema="ecommerce-turma-926" name="carrinho" color="C1D8EE" x="544" y="336" />
+		<entity schema="ecommerce-turma-926" name="cliente" color="C1D8EE" x="416" y="80" />
+		<entity schema="ecommerce-turma-926" name="cliente_cupom" color="3986C1" x="80" y="304" />
+		<entity schema="ecommerce-turma-926" name="cliente_endereco" color="C1D8EE" x="288" y="384" />
+		<entity schema="ecommerce-turma-926" name="cupom" color="C1D8EE" x="80" y="48" />
+		<entity schema="ecommerce-turma-926" name="endereco" color="C1D8EE" x="752" y="64" />
+		<entity schema="ecommerce-turma-926" name="estoque" color="C1D8EE" x="1088" y="128" />
+		<entity schema="ecommerce-turma-926" name="fornecedor" color="C1D8EE" x="800" y="368" />
+		<entity schema="ecommerce-turma-926" name="item_pedido" color="C1D8EE" x="432" y="576" />
+		<entity schema="ecommerce-turma-926" name="pedido" color="C1D8EE" x="48" y="624" />
+		<entity schema="ecommerce-turma-926" name="produto" color="C1D8EE" x="784" y="608" />
+		<entity schema="ecommerce-turma-926" name="produto_estoque" color="C1D8EE" x="1088" y="336" />
+		<callout x="208" y="1440" pointer="Round" >
 			<comment><![CDATA[This is a layout - a diagram with tools.
 - Right-click the layout to create new tables. 
 - Double-click table headers to edit. 
