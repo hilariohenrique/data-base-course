@@ -1,2 +1,2 @@
-# Projeto Parte 1
-## Modelagem, DDL e DML
+# Projeto Parte 2 - Consultas
+## Consultas realizadas dentro do Banco de dados
