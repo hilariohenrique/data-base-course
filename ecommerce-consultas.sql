@@ -1,9 +1,6 @@
 -- 1 Listar todos os cliente que tem o nome 'ANA'.> Dica: Buscar sobre função Like
 
-select * from cliente c where c.nome like 'ana%';
-select * from cliente c where c.nome like '%ana';
 select * from cliente c where c.nome ilike '%ana%';
-select * from cliente c where c.nome ilike '%ana%Lo%';
 
 -- 2 Pedidos feitos em 2023
 
@@ -147,34 +144,101 @@ order by pe.data_criacao desc;
 /* 18 - Relatório com os TOP 10 clientes que mais gastaram esse ano, 
  * com os dados: nome do cliente, valor total gasto;
 */
+select c.nome, sum(ip.valor) total_gasto
+from cliente c, pedido pe, item_pedido ip
+where pe.data_criacao between '2023-01-01' and '2023-12-31'
+and c.id = pe.id_cliente and pe.id = ip.id_pedido
+and pe.status not in ('PENDENTE_CONFIRMACAO_PAGAMENTO','CANCELADO')
+group by c.id, c.nome
+order by total_gasto desc limit 10;
 
-select c.nome from cliente c, pedido pe, item_pedido ip  
-where pe.data_criacao between '2022-01-01' and '2022-12-31'  
-and pe.id_cliente = c.id
-group by c.id, pe.data_criacao
-order by pe.data_criacao desc ;
+/*OU*/
+
+select c.nome, sum(ip.valor) total_gasto
+from cliente c join pedido pe on c.id = pe.id_cliente 
+join item_pedido ip on pe.id = ip.id_pedido
+where pe.data_criacao between '2023-01-01' and '2023-12-31'
+and pe.status not in ('PENDENTE_CONFIRMACAO_PAGAMENTO','CANCELADO')
+group by c.id, c.nome
+order by total_gasto desc limit 10;
 
 /*19 - Relatório com os TOP 10 produtos vendidos esse ano, com os dados: 
  * descrição do produto, quantidade vendida, valor total das vendas desse produto;
  */
 
+select pr.descricao , sum(ip.quantidade) quantidade_vendida, 
+sum(ip.valor) valor_total_vendas 
+from produto pr , item_pedido ip, pedido pe 
+where pe.data_criacao between '2023-01-01' and '2023-12-31'
+and ip.id_pedido = pe.id and pr.id = ip.id_produto
+and pe.status not in ('PENDENTE_CONFIRMACAO_PAGAMENTO','CANCELADO')
+group by pr.id, pr.descricao 
+order by quantidade_vendida desc limit 10;
+
+/*OU*/
+
+select pr.descricao , sum(ip.quantidade) quantidade_vendida, 
+sum(ip.valor) valor_total_vendas 
+from produto pr join item_pedido ip on pr.id = ip.id_produto
+join pedido pe on ip.id_pedido = pe.id
+where pe.data_criacao between '2023-01-01' and '2023-12-31'
+and pe.status not in ('PENDENTE_CONFIRMACAO_PAGAMENTO','CANCELADO')
+group by pr.id, pr.descricao 
+order by quantidade_vendida desc limit 10;
+
+
 /*20 - Exibir o ticket médio do nosso e-commerce, ou seja, a média dos 
  * valores totais gasto em pedidos com sucesso;
 */
+select avg(soma_pedido) tikect_medio from (select sum(ip.valor) as soma_pedido
+from pedido pe join item_pedido ip ON ip.id_pedido = pe.id 
+where pe.status not in ('PENDENTE_CONFIRMACAO_PAGAMENTO','CANCELADO')
+group by pe.id) as tickets;
+
 
 /*21 - Relatório dos clientes gastaram acima de R$ 10000 em um pedido, 
  * com os dados: id_cliente, nome do cliente, valor máximo gasto em um pedido;
  */
+select c.id, c.nome, sum(ip.valor) valor_pedido 
+from cliente c join pedido pe on c.id = pe.id_cliente 
+join item_pedido ip on pe.id = ip.id_pedido 
+where pe.status not in ('PENDENTE_CONFIRMACAO_PAGAMENTO','CANCELADO')
+group by pe.id,c.id,c.nome
+having sum(ip.valor) > 10000
+order by valor_pedido desc;
+
 
 /*22 - Listar TOP 10 cupons mais utilizados e o total descontado por eles.
 */
+select cp.descricao, count(*) quantidade_usos , sum(cp.valor) total_descontado
+from cupom cp join pedido pe on pe.id_cupom = cp.id
+where pe.status not in ('PENDENTE_CONFIRMACAO_PAGAMENTO','CANCELADO')
+group by cp.descricao 
+order by quantidade_usos desc limit 10; 
 
 /*23 - Listar cupons que foram utilizados mais que seu limite;*/
+select cp.descricao, count(*) quantidade_usos, cp.limite_maximo_usos 
+from cupom cp join pedido pe on pe.id_cupom = cp.id
+where pe.status not in ('PENDENTE_CONFIRMACAO_PAGAMENTO','CANCELADO')
+group by cp.descricao, cp.limite_maximo_usos
+having  count(*) > cp.limite_maximo_usos
+order by quantidade_usos desc limit 10;
 
 /*24 - Listar todos os ids dos pedidos que foram feitos por pessoas que moram 
  * em São Paulo (unidade federativa, uf, SP) e compraram o produto com código 
  * de barras '97692630963921';
 */
+
+select pe.id id_pedido from pedido pe 
+join cliente c on pe.id_cliente  = c.id 
+join endereco e on e.id = c.id_endereco
+join item_pedido ip ON ip.id_pedido = pe.id
+join produto pr on pr.id = ip.id_produto 
+where pe.status not in ('PENDENTE_CONFIRMACAO_PAGAMENTO','CANCELADO')
+and e.uf ='SP' and pr.codigo_barras = '97692630963921';
+
+
+
 
 
 
